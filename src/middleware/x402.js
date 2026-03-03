@@ -22,7 +22,8 @@ import {
   sonic,
   hyperEvm,
   ink,
-  monad
+  monad,
+  abstract,
 } from 'viem/chains';
 import { ROUTE_CONFIG, SUPPORTED_NETWORKS, CREDIT_DEFAULTS } from '../config/routes.js';
 import {
@@ -83,6 +84,7 @@ const VIEM_CHAINS = {
   999: hyperEvm,
   57073: ink,
   143: monad,
+  2741: abstract,
   // Add more: import from viem/chains and register here
 };
 
