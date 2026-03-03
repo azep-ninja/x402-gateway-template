@@ -10,20 +10,19 @@ import {
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import {
-  base,
-  mainnet,
   arbitrum,
-  optimism,
-  polygon,
   avalanche,
-  linea,
-  unichain,
-  megaeth,
-  sonic,
+  base,
   hyperEvm,
   ink,
+  linea,
+  mainnet,
+  megaeth,
   monad,
-  abstract,
+  optimism,
+  polygon,
+  sonic,
+  unichain,
 } from 'viem/chains';
 import { ROUTE_CONFIG, SUPPORTED_NETWORKS, CREDIT_DEFAULTS } from '../config/routes.js';
 import {
@@ -84,7 +83,7 @@ const VIEM_CHAINS = {
   999: hyperEvm,
   57073: ink,
   143: monad,
-  2741: abstract,
+  // Abstract (Chain ID 2741) uses getViemChain() fallback — no named export needed.
   // Add more: import from viem/chains and register here
 };
 

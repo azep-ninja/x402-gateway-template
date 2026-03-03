@@ -60,6 +60,17 @@ function usdcv2(address) {
   };
 }
 
+// For Circle FiatTokenProxy (FiatTokenV2) bridged tokens with full EIP-3009 support.
+// Currently used by Abstract (USDC.e via Stargate).
+function usdcBridgedStargate(address) {
+  return {
+    address,
+    name: 'Bridged USDC (Stargate)',
+    version: '2',
+    decimals: 6,
+  };
+}
+
 // ─── Credit System Defaults ────────────────────────────────
 // Global defaults for the credit system. Each route can override
 // any of these values. Set ENABLE_CREDIT_SYSTEM=true to activate.
@@ -186,19 +197,13 @@ const MONAD = {
 // Abstract (ZK rollup, EVM-compatible)
 // Uses USDC.e (Bridged USDC via Stargate) — a Circle FiatTokenProxy (FiatTokenV2)
 // with full EIP-3009 (transferWithAuthorization) support, verified on-chain.
-// EIP-712 domain: name="Bridged USDC (Stargate)", version="2", decimals=6
 // Contract: https://abscan.org/address/0x84A71ccD554Cc1b02749b35d22F684CC8ec987e1
 const ABSTRACT = {
   vm: 'evm',
   caip2: 'eip155:2741',
   chainId: 2741,
   rpcEnvVar: 'ABSTRACT_RPC_URL',
-  token: {
-    address: '0x84A71ccD554Cc1b02749b35d22F684CC8ec987e1',
-    name: 'Bridged USDC (Stargate)',
-    version: '2',
-    decimals: 6,
-  },
+  token: usdcBridgedStargate('0x84A71ccD554Cc1b02749b35d22F684CC8ec987e1'),
 };
 
 // ─── Facilitator-based Networks ────────────────────────────
