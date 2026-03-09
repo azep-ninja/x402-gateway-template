@@ -198,11 +198,20 @@ const MONAD = {
 // Uses USDC.e (Bridged USDC via Stargate) — a Circle FiatTokenProxy (FiatTokenV2)
 // with full EIP-3009 (transferWithAuthorization) support, verified on-chain.
 // Contract: https://abscan.org/address/0x84A71ccD554Cc1b02749b35d22F684CC8ec987e1
+//
+// Abstract runs a public x402 facilitator (https://facilitator.x402.abs.xyz) that
+// verifies and settles payments with gas fully sponsored via paymaster — no API key
+// or gas funding required. See: https://docs.abs.xyz/x402/overview
 const ABSTRACT = {
   vm: 'evm',
   caip2: 'eip155:2741',
   chainId: 2741,
   rpcEnvVar: 'ABSTRACT_RPC_URL',
+  facilitator: {
+    url: 'https://facilitator.x402.abs.xyz',
+    // No API key required — Abstract's facilitator is public and free.
+    // Gas is fully sponsored via paymaster.
+  },
   token: usdcBridgedStargate('0x84A71ccD554Cc1b02749b35d22F684CC8ec987e1'),
 };
 

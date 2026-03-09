@@ -140,7 +140,7 @@ export const ROUTE_CONFIG = {
 | `HYPEREVM_RPC_URL` | HyperEVM | HYPE (~$15-20) |
 | `INK_RPC_URL` | Ink | ETH (~$2) |
 | `MONAD_RPC_URL` | Monad | MON (~$2) |
-| `ABSTRACT_RPC_URL` | Abstract | ETH (~$0.01) |
+| `ABSTRACT_RPC_URL` | Abstract | None (gas sponsored via paymaster) |
 | `SOLANA_RPC_URL` | Solana | SOL (~$2) |
 
 #### Solana (optional)

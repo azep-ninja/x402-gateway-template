@@ -392,8 +392,9 @@ async function settlePaymentSvm(paymentPayload, routeConfig, network) {
 // ============================================================
 async function verifyPaymentViaFacilitator(paymentPayload, routeConfig, network) {
   const { url, apiKeyEnv, networkName, facilitatorContract, x402Version } = network.facilitator;
-  const apiKey = process.env[apiKeyEnv];
-  if (!apiKey) return { valid: false, reason: `No API key for facilitator (env: ${apiKeyEnv})` };
+  // apiKeyEnv is optional — public facilitators (e.g. Abstract) require no auth.
+  const apiKey = apiKeyEnv ? process.env[apiKeyEnv] : null;
+  if (apiKeyEnv && !apiKey) return { valid: false, reason: `No API key for facilitator (env: ${apiKeyEnv})` };
 
   const basePriceAtomic = BigInt(routeConfig.priceAtomic);
   const decimalDiff = network.token.decimals - 6;
@@ -424,7 +425,10 @@ async function verifyPaymentViaFacilitator(paymentPayload, routeConfig, network)
     console.log(`[x402] Facilitator verify: ${url}/verify | network: ${facilitatorNetwork}`);
     const res = await fetch(`${url}/verify`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}),
+      },
       body: JSON.stringify(body),
     });
 
@@ -447,7 +451,8 @@ async function verifyPaymentViaFacilitator(paymentPayload, routeConfig, network)
 // ============================================================
 async function settlePaymentViaFacilitator(paymentPayload, routeConfig, network) {
   const { url, apiKeyEnv, networkName, facilitatorContract, x402Version } = network.facilitator;
-  const apiKey = process.env[apiKeyEnv];
+  // apiKeyEnv is optional — public facilitators (e.g. Abstract) require no auth.
+  const apiKey = apiKeyEnv ? process.env[apiKeyEnv] : null;
 
   const basePriceAtomic = BigInt(routeConfig.priceAtomic);
   const decimalDiff = network.token.decimals - 6;
@@ -477,7 +482,10 @@ async function settlePaymentViaFacilitator(paymentPayload, routeConfig, network)
   console.log(`[x402] Facilitator settle: ${url}/settle | network: ${facilitatorNetwork}`);
   const res = await fetch(`${url}/settle`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}),
+    },
     body: JSON.stringify(body),
   });
 
