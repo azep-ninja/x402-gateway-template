@@ -21,7 +21,7 @@ No wallets to integrate. No payment pages. Just HTTP headers.
 
 ## Features
 
-- **Multi-chain support** — Accept USDC on Base, Ethereum, Arbitrum, Optimism, Polygon, Avalanche, Unichain, Linea, Sonic, HyperEVM, Ink, Monad, and Solana out of the box
+- **Multi-chain support** — Accept USDC on Base, Ethereum, Arbitrum, Optimism, Polygon, Avalanche, Unichain, Linea, Sonic, HyperEVM, Ink, Monad, Abstract, and Solana out of the box
 - **MegaETH support** — USDM (18 decimals) via Meridian facilitator
 - **Hybrid settlement** — Local on-chain settlement via [viem](https://viem.sh) + optional external facilitators
 - **Solana support** — SVM payments via [@x402/svm](https://www.npmjs.com/package/@x402/svm) facilitator pattern
@@ -140,6 +140,7 @@ export const ROUTE_CONFIG = {
 | `HYPEREVM_RPC_URL` | HyperEVM | HYPE (~$15-20) |
 | `INK_RPC_URL` | Ink | ETH (~$2) |
 | `MONAD_RPC_URL` | Monad | MON (~$2) |
+| `ABSTRACT_RPC_URL` | Abstract | None (gas sponsored via paymaster) |
 | `SOLANA_RPC_URL` | Solana | SOL (~$2) |
 
 #### Solana (optional)

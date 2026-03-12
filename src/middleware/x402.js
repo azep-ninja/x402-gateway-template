@@ -10,19 +10,19 @@ import {
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import {
-  base,
-  mainnet,
   arbitrum,
-  optimism,
-  polygon,
   avalanche,
-  linea,
-  unichain,
-  megaeth,
-  sonic,
+  base,
   hyperEvm,
   ink,
-  monad
+  linea,
+  mainnet,
+  megaeth,
+  monad,
+  optimism,
+  polygon,
+  sonic,
+  unichain,
 } from 'viem/chains';
 import { ROUTE_CONFIG, SUPPORTED_NETWORKS, CREDIT_DEFAULTS } from '../config/routes.js';
 import {
@@ -83,6 +83,7 @@ const VIEM_CHAINS = {
   999: hyperEvm,
   57073: ink,
   143: monad,
+  // Abstract (Chain ID 2741) uses getViemChain() fallback — no named export needed.
   // Add more: import from viem/chains and register here
 };
 
@@ -391,8 +392,9 @@ async function settlePaymentSvm(paymentPayload, routeConfig, network) {
 // ============================================================
 async function verifyPaymentViaFacilitator(paymentPayload, routeConfig, network) {
   const { url, apiKeyEnv, networkName, facilitatorContract, x402Version } = network.facilitator;
-  const apiKey = process.env[apiKeyEnv];
-  if (!apiKey) return { valid: false, reason: `No API key for facilitator (env: ${apiKeyEnv})` };
+  // apiKeyEnv is optional — public facilitators (e.g. Abstract) require no auth.
+  const apiKey = apiKeyEnv ? process.env[apiKeyEnv] : null;
+  if (apiKeyEnv && !apiKey) return { valid: false, reason: `No API key for facilitator (env: ${apiKeyEnv})` };
 
   const basePriceAtomic = BigInt(routeConfig.priceAtomic);
   const decimalDiff = network.token.decimals - 6;
@@ -423,7 +425,10 @@ async function verifyPaymentViaFacilitator(paymentPayload, routeConfig, network)
     console.log(`[x402] Facilitator verify: ${url}/verify | network: ${facilitatorNetwork}`);
     const res = await fetch(`${url}/verify`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}),
+      },
       body: JSON.stringify(body),
     });
 
@@ -446,7 +451,8 @@ async function verifyPaymentViaFacilitator(paymentPayload, routeConfig, network)
 // ============================================================
 async function settlePaymentViaFacilitator(paymentPayload, routeConfig, network) {
   const { url, apiKeyEnv, networkName, facilitatorContract, x402Version } = network.facilitator;
-  const apiKey = process.env[apiKeyEnv];
+  // apiKeyEnv is optional — public facilitators (e.g. Abstract) require no auth.
+  const apiKey = apiKeyEnv ? process.env[apiKeyEnv] : null;
 
   const basePriceAtomic = BigInt(routeConfig.priceAtomic);
   const decimalDiff = network.token.decimals - 6;
@@ -476,7 +482,10 @@ async function settlePaymentViaFacilitator(paymentPayload, routeConfig, network)
   console.log(`[x402] Facilitator settle: ${url}/settle | network: ${facilitatorNetwork}`);
   const res = await fetch(`${url}/settle`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}),
+    },
     body: JSON.stringify(body),
   });
 

@@ -17,9 +17,10 @@
 //        Uses TransferChecked with partial signing
 //        Requires SOLANA_FACILITATOR_PRIVATE_KEY for gas
 //
-// IMPORTANT: Only native USDC is supported, NOT bridged USDC.e
-//   Bridged tokens use different contract implementations
-//   that may not support EIP-3009.
+// IMPORTANT: Only Circle-issued USDC with EIP-3009 support is compatible.
+//   Abstract uses USDC.e (Bridged USDC via Stargate), which is a Circle
+//   FiatTokenProxy (FiatTokenV2) with full EIP-3009 support — verified on-chain.
+//   Standard bridged USDC.e from other bridges may NOT support EIP-3009.
 //
 // To add a new EVM chain:
 //   1. Add network config below with CAIP-2 ID and RPC env var
@@ -54,6 +55,17 @@ function usdcv2(address) {
   return {
     address,
     name: 'USDC',
+    version: '2',
+    decimals: 6,
+  };
+}
+
+// For Circle FiatTokenProxy (FiatTokenV2) bridged tokens with full EIP-3009 support.
+// Currently used by Abstract (USDC.e via Stargate).
+function usdcBridgedStargate(address) {
+  return {
+    address,
+    name: 'Bridged USDC (Stargate)',
     version: '2',
     decimals: 6,
   };
@@ -182,6 +194,27 @@ const MONAD = {
   token: usdcv2('0x754704Bc059F8C67012fEd69BC8a327a5aafb603')
 };
 
+// Abstract (ZK rollup, EVM-compatible)
+// Uses USDC.e (Bridged USDC via Stargate) — a Circle FiatTokenProxy (FiatTokenV2)
+// with full EIP-3009 (transferWithAuthorization) support, verified on-chain.
+// Contract: https://abscan.org/address/0x84A71ccD554Cc1b02749b35d22F684CC8ec987e1
+//
+// Abstract runs a public x402 facilitator (https://facilitator.x402.abs.xyz) that
+// verifies and settles payments with gas fully sponsored via paymaster — no API key
+// or gas funding required. See: https://docs.abs.xyz/x402/overview
+const ABSTRACT = {
+  vm: 'evm',
+  caip2: 'eip155:2741',
+  chainId: 2741,
+  rpcEnvVar: 'ABSTRACT_RPC_URL',
+  facilitator: {
+    url: 'https://facilitator.x402.abs.xyz',
+    // No API key required — Abstract's facilitator is public and free.
+    // Gas is fully sponsored via paymaster.
+  },
+  token: usdcBridgedStargate('0x84A71ccD554Cc1b02749b35d22F684CC8ec987e1'),
+};
+
 // ─── Facilitator-based Networks ────────────────────────────
 // For chains where the stablecoin doesn't natively support EIP-3009,
 // use an external facilitator service to verify + settle payments.
@@ -248,6 +281,7 @@ const ALL_NETWORKS = {
   'eip155:999': HYPEREVM,
   'eip155:57073': INK,
   'eip155:143': MONAD,
+  'eip155:2741': ABSTRACT,
   'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp': SOLANA_MAINNET,
 };
 
