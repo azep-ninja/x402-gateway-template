@@ -426,7 +426,7 @@ Set `creditOnStatusCodes: []` to disable credits for a specific route.
 
 ## License
 
-MIT — fork it, ship it, make money with it.
+MIT - fork it, ship it, make money with it.
 
 ## Links
 
